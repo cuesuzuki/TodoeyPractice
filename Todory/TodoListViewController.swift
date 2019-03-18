@@ -11,7 +11,7 @@ import UIKit
 class TodoListViewController: UITableViewController {
 
     // Itemの配列をつくる - ハードコーティングされた３つのアイテム
-    let itemArray = ["Find Mike","Buy Eggs", "Destroy Demogorgon"]
+    var itemArray = ["Find Mike","Buy Eggs", "Destroy Demogorgon"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,8 +70,42 @@ class TodoListViewController: UITableViewController {
         // ↑　テーブル選択行のindexPathをアニメーション化(点滅)してかわいくする
         tableView.deselectRow(at: indexPath, animated: true)
         
-        
     }
+    
+    //MARK - Add New Items
+    
+    //①アラート表示させるためのバーボタンを追加
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        // リストに項目を書き込んだあとに追加できるように警告するアラート
+        
+//UITextField()を変数化することで、アクションボタン内で表示するタイミング（ブロック）の問題を解決できる
+        var textField = UITextField()
+        
+        //②アクションとテキストフィールドを持つアラートを作成
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+
+        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            //このタイミングでprintなどを表示したい
+            //でも、やりたいのはprintでなく、itemArrayに[追加]すること！
+            self.itemArray.append(textField.text!)
+            
+            // ④これを書かないと更新（表示）されない！
+            self.tableView.reloadData()
+            
+        }
+        //③アラート内のアイテム追加ボタンをクリックするとtextFieldに書いたものをitemArrayに[追加]。
+        alert.addTextField { (alertTextField) in
+            //アイテムボタンを押すと何が起きるかわかるアラート
+            alertTextField.placeholder = "Create new item"
+            //入力されたテキストをどうやってつかんでprintへ渡すのか？
+            textField = alertTextField
+        }
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
 
     
 }
