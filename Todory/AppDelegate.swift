@@ -13,9 +13,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    // データ保存の方法：ホームボタンでアプリを終了するのを保存し、別のアプリに入る
+    //バックグラウンドで実行中のプロセスでもメモリを使っている
+    //メモリを有効活用するための処理
+    //アプリのライフサイクル：起動→画面に表示→背景へ→終了してリソース回収
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+
+        // パスをprint - 追加したデータが表示されていないのにどこかに保存されていることを確認
+        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
+        //追加データ保存先のファイルパス（＜ーMacのHDD上の）
+        // -> /Users/suzukiyutaka/Library/Developer/CoreSimulator/Devices/4FD55680-DD64-428E-84EA-5F31216B592A/data/Containers/Data/Application/F8D616C5-3781-42B3-801C-0C1DEE406F2C/Documents
+
+        
         return true
     }
 
@@ -25,8 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        
+        //アプリと背景。アプリがスクリーンから消えたときに、バックグラウンドに移動したとき
+        //スマホのメモリに残ってる。問題はアプリ終了するとき
+        print("アプリがバックグラウンドへ移動-applicationDidEnterBackground")
+        
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -38,7 +51,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        // アプリが終了したときの処理
+        //終了ー再起動するとアイテムが消えてしまう。
+        //永続的ストレージがないため、アプリ起動中にリストに追加されるだけ
+        //いくつかの選択肢あるが、小さなデータを永続化するだけならUserDefaultを使う
+        print("アプリが終了したときの処理-applicationWillTerminate")
     }
 
 

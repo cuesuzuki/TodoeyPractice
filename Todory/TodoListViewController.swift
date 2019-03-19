@@ -13,9 +13,17 @@ class TodoListViewController: UITableViewController {
     // Itemの配列をつくる - ハードコーティングされた３つのアイテム
     var itemArray = ["Find Mike","Buy Eggs", "Destroy Demogorgon"]
     
+    //UserDefaultsを使用するには、新しいオブジェクトを作成する必要がある
+    //Deaultsを呼ぶとデフォルトのデータベースと同じユーザーデフォルトに設定される
+    //標準仕様を設定する。新しいアイテムをリストに追加する部分に行けるようになる
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let items = defaults.array(forKey: "TodoListArray") as? [String]{
+            itemArray = items
+        }
         
     }
 
@@ -88,6 +96,9 @@ class TodoListViewController: UITableViewController {
             //このタイミングでprintなどを表示したい
             //でも、やりたいのはprintでなく、itemArrayに[追加]すること！
             self.itemArray.append(textField.text!)
+            
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            //クロージャーの内側にあるときはオブジェクトにはselfを追加する
             
             // ④これを書かないと更新（表示）されない！
             self.tableView.reloadData()
