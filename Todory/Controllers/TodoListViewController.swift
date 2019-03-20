@@ -11,45 +11,61 @@ import UIKit
 class TodoListViewController: UITableViewController {
 
     // Itemの配列をつくる - ハードコーティングされた３つのアイテム
-    var itemArray = ["Find Mike","Buy Eggs", "Destroy Demogorgon"]
+    var itemArray = [Item]()
     
     //UserDefaultsを使用するには、新しいオブジェクトを作成する必要がある
-    //Deaultsを呼ぶとデフォルトのデータベースと同じユーザーデフォルトに設定される
-    //標準仕様を設定する。新しいアイテムをリストに追加する部分に行けるようになる
+    //deaultsを呼ぶとデフォルトのデータベースと同じユーザーデフォルトに設定される
+    //standardを設定する。新しいアイテムをリストに追加する部分に行けるようになる
     let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //★コードを記述する位置が大事！(defaultsキーのobject内容を削除する)
+        //defaults.removeObject(forKey: "TodoListArray")
 
-        if let items = defaults.array(forKey: "TodoListArray") as? [String]{
+        let newItem = Item()
+        newItem.title = "Find Mike"
+        itemArray.append(newItem)
+        
+        let newItem2 = Item()
+        newItem2.title = "Buy Eggs"
+        itemArray.append(newItem2)
+        
+        let newItem3 = Item()
+        newItem3.title = "Destroy Demagorgon"
+        itemArray.append(newItem3)
+        
+
+        if let items = defaults.array(forKey: "TodoListArray") as? [Item]{
             itemArray = items
+
         }
         
     }
 
-    // MARK - TableView Datasouece Mesods
+    // MARK - TableView Datasouece Methods
       // サブクラス化
     // セクション行数
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        // 配列の数だけセルの行をつくる
         return itemArray.count
     }
     
     // セルの中身
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        // indexPathの識別子を持つ再生可能なセルを作成する
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        // textLabelを正しく設定する
-        // 単一セルにあるラベル、.textプロパティを利用して、アイテム配列のアイテムと同じになるように設定する
-        cell.textLabel?.text = itemArray[indexPath.row]
+        let item = itemArray[indexPath.row]
+
+        cell.textLabel?.text = item.title
         
-        // このメソッドは最後に再利用セルで作成されたセルを返す
+        //turnary operator ==>
+        //value = condition ? valueIfTrue : valueIfFalse
+        
+        cell.accessoryType = item.done ? .checkmark : .none
+
         return cell
-        
-        // 現在の行のテキストが入力され、TableViewに戻され、業として表示される
         
     }
     
@@ -62,18 +78,9 @@ class TodoListViewController: UITableViewController {
     // タップすると（indexPathの行番号を表示）するデリゲートメソッド
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
    
-        //print(itemArray[indexPath.row])
-        // 配列の添字番号でなく項目名を出力したい
-        
-        //白に戻るので今度はアクセサリーでチェックマークをつける
-        //デフォルトにならないようコードで書く
-        
-        //もしセル行にチェックマークがついていたら、アクセサリをnoneに変更したい
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }else{ tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-            
-        }
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+
+        tableView.reloadData()
         
         // ↑　テーブル選択行のindexPathをアニメーション化(点滅)してかわいくする
         tableView.deselectRow(at: indexPath, animated: true)
@@ -93,13 +100,14 @@ class TodoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
 
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            //このタイミングでprintなどを表示したい
-            //でも、やりたいのはprintでなく、itemArrayに[追加]すること！
-            self.itemArray.append(textField.text!)
+            
+            let newItem = Item()
+            newItem.title = textField.text!
+            
+            self.itemArray.append(newItem)
             
             self.defaults.set(self.itemArray, forKey: "TodoListArray")
             //クロージャーの内側にあるときはオブジェクトにはselfを追加する
-            
             // ④これを書かないと更新（表示）されない！
             self.tableView.reloadData()
             
@@ -116,8 +124,6 @@ class TodoListViewController: UITableViewController {
         
         present(alert, animated: true, completion: nil)
     }
-    
-
     
 }
 
