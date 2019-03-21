@@ -20,10 +20,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        // パスをprint - 追加したデータが表示されていないのにどこかに保存されていることを確認
-        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
-        //追加データ保存先のファイルパス（＜ーMacのHDD上の）
-        // -> /Users/suzukiyutaka/Library/Developer/CoreSimulator/Devices/4FD55680-DD64-428E-84EA-5F31216B592A/data/Containers/Data/Application/F8D616C5-3781-42B3-801C-0C1DEE406F2C/Documents
 
         
         return true
